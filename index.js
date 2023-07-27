@@ -129,7 +129,7 @@ const renderApp = () => {
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографий пользвателя
     
-    getUserPost({ token: getToken()})
+    getUserPost({ token: getToken() })
     .then((userPosts) => {
       const userPostHtml = userPosts.map((post) => {
         return `
