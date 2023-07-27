@@ -72,7 +72,7 @@ export const goToPage = (newPage, data) => {
       page = USER_POSTS_PAGE;
       const userId = data.userId;
       posts = [];
-      posts = getUserPost({ token: getToken(), userId });
+      posts = getUserPost({ token: getToken(), userId: userId });
       console.log(userId);
       return renderApp();
     }
@@ -128,10 +128,9 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографий пользвателя
-    let userId = "";
 
-    getUserPost({ token: getToken(), userId })
+    // TODO: реализовать страницу фотографий пользвателя
+     getUserPost({ token: getToken(), userId })
       .then((userPosts) => {
         console.log(userId);
         const userPostHtml = userPosts
