@@ -46,7 +46,7 @@ export function postNewPost({ token, description, imageUrl }) {
 
 //Получить посты конкретного пользователя
 export function getUserPost({ token, userId }) {
-  return fetch(baseHost + `/user-posts/${userId}`, {
+  return fetch(`${baseHost}/user-posts/${userId}`, {
     method: "GET",
     headers: {
       Authorization: token,

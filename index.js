@@ -72,7 +72,8 @@ export const goToPage = (newPage, data) => {
       page = USER_POSTS_PAGE;
       const userId = data.userId;
       posts = [];
-      posts = getUserPost({ token: getToken(), userId })
+      posts = getUserPost({ token: getToken(), userId });
+      console.log(userId);
       return renderApp();
     }
 
@@ -128,11 +129,14 @@ const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографий пользвателя
-    
-    getUserPost({ token: getToken() })
-    .then((userPosts) => {
-      const userPostHtml = userPosts.map((post) => {
-        return `
+    let userId = "";
+
+    getUserPost({ token: getToken(), userId })
+      .then((userPosts) => {
+        console.log(userId);
+        const userPostHtml = userPosts
+          .map((post) => {
+            return `
         <li class="post">
           <div class="post-header" data-user-id="${post.user.id}">
               <img src="${post.user.imageUrl}" class="post-header__user-image">
@@ -157,7 +161,9 @@ const renderApp = () => {
             19 минут назад
           </p>
         </li>
-        `}).join('');
+        `;
+          })
+          .join("");
 
         const userPostsHtml = `
         <div class="page-container">
@@ -169,12 +175,12 @@ const renderApp = () => {
         `;
 
         appEl.innerHTML = userPostsHtml;
-    })
-    .catch((error) => {
-      console.warn('error');
-      appEl.innerHTML = 'Ошибка при загрузке страницы пользователя';
-    })
-   return;
+      })
+      .catch((error) => {
+        console.warn("error");
+        appEl.innerHTML = "Ошибка при загрузке страницы пользователя";
+      });
+    return;
   }
 };
 
