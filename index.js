@@ -15,12 +15,13 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
+import { renderUserPage } from "./components/user-posts-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
 
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
 };
@@ -68,9 +69,10 @@ export const goToPage = (newPage, data) => {
 
     if (newPage === USER_POSTS_PAGE) {
       // TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
+      
       page = USER_POSTS_PAGE;
       const userId = data.userId;
+      console.log("Открываю страницу пользователя: ", data.userId);
       posts = [];
       posts = getUserPost({ token: getToken(), userId: userId });
       console.log(userId);
@@ -128,59 +130,12 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-
     // TODO: реализовать страницу фотографий пользвателя
-     getUserPost({ token: getToken(), userId })
-      .then((userPosts) => {
-        console.log(userId);
-        const userPostHtml = userPosts
-          .map((post) => {
-            return `
-        <li class="post">
-          <div class="post-header" data-user-id="${post.user.id}">
-              <img src="${post.user.imageUrl}" class="post-header__user-image">
-              <p class="post-header__user-name">${post.user.name}</p>
-          </div>
-          <div class="post-image-container">
-            <img class="post-image" src="${post.imageUrl}">
-          </div>
-          <div class="post-likes">
-            <button data-post-id="${post.id}" class="like-button">
-              <img src="./assets/images/like-active.svg">
-            </button>
-            <p class="post-likes-text">
-              Нравится: <strong>2</strong>
-            </p>
-          </div>
-          <p class="post-text">
-            <span class="user-name">${post.user.name}</span>
-            ${post.description}
-          </p>
-          <p class="post-date">
-            19 минут назад
-          </p>
-        </li>
-        `;
-          })
-          .join("");
-
-        const userPostsHtml = `
-        <div class="page-container">
-          <div class="header-container"></div>
-          <ul class="posts">
-            ${userPostHtml}
-          </ul>
-        </div>
-        `;
-
-        appEl.innerHTML = userPostsHtml;
-      })
-      .catch((error) => {
-        console.warn("error");
-        appEl.innerHTML = "Ошибка при загрузке страницы пользователя";
-      });
+    renderUserPage({ userId });
+    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return;
   }
+  
 };
 
 goToPage(POSTS_PAGE);

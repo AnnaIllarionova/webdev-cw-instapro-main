@@ -4,6 +4,7 @@ const personalKey = "prod";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
+
 //Получение всех постов из API
 export function getPosts({ token }) {
   return fetch(postsHost, {
