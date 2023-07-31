@@ -16,7 +16,7 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 import { renderUserPage } from "./components/user-posts-component.js";
-//import { addLike } from "./components/add-like-component.js";
+import { addLike } from "./components/add-like-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -89,7 +89,7 @@ export const goToPage = (newPage, data) => {
   throw new Error("страницы не существует");
 };
 
-const renderApp = () => {
+export const renderApp = () => {
   const appEl = document.getElementById("app");
   if (page === LOADING_PAGE) {
     return renderLoadingPageComponent({
@@ -140,4 +140,3 @@ const renderApp = () => {
 };
 
 goToPage(POSTS_PAGE);
-

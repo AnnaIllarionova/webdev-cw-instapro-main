@@ -20,13 +20,13 @@ export function addLike({ posts }) {
         .then(() => {
           post.isliked = false;
 
-          //getPosts({ token: getToken() });
+          getPosts({ token: getToken() });
         })
       } else {
         getLikes({ token: getToken(), id })
         .then(() => {
           post.isliked = true;
-          //getPosts({ token: getToken() });
+          getPosts({ token: getToken() });
         });
       }  
     });

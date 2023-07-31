@@ -2,12 +2,15 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
 import { addLike } from "./add-like-component.js";
+import { formatDistanceToNow } from "date-fns";
+import { ru } from "date-fns/locale";
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
   console.log("Актуальный список постов:", posts);
  
   const postsHtml = posts.map((post, index) => {
+    const postWasCreated = formatDistanceToNow(new Date(post.createdAt), { locale: ru})
     console.log(post.user.name);
     return `
     <li class="post">
@@ -35,7 +38,7 @@ export function renderPostsPageComponent({ appEl }) {
         ${post.description}
       </p>
       <p class="post-date">
-        19 минут назад
+       Опубликован: ${postWasCreated} назад
       </p>
     </li>
     `;
