@@ -16,6 +16,7 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 import { renderUserPage } from "./components/user-posts-component.js";
+//import { addLike } from "./components/add-like-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -135,7 +136,8 @@ const renderApp = () => {
     appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return;
   }
-  
+ 
 };
 
 goToPage(POSTS_PAGE);
+

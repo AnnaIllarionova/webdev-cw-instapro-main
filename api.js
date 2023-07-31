@@ -4,7 +4,6 @@ const personalKey = "prod";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
-
 //Получение всех постов из API
 export function getPosts({ token }) {
   return fetch(postsHost, {
@@ -42,7 +41,12 @@ export function postNewPost({ token, description, imageUrl }) {
       throw new Error("Не введено описание или не добавлена картинка");
     }
     return response.json();
-  });
+  })
+  .catch((error) => {
+    if (error.message === "Не введено описание или не добавлена картинка") {
+      alert("Введите описание или добавьте картинку");
+    }
+  })
 }
 
 //Получить посты конкретного пользователя
@@ -107,4 +111,46 @@ export function uploadImage({ file }) {
   }).then((response) => {
     return response.json();
   });
+}
+
+//Поставить лайк
+export function getLikes({ token, id }) {
+  return fetch(postsHost + `/${id}/like`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status !== 200) {
+        throw new Error("Нет авторизации для того, чтобы лайкать посты");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      if ((error.message = "Нет авторизации для того, чтобы лайкать посты")) {
+        alert("Авторизуйтесь, чтобы поставить лайк");
+      }
+    });
+}
+
+//Поставить дислайк
+export function removeLike({ token, id }) {
+  return fetch(postsHost + `/${id}/dislike`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status !== 200) {
+        throw new Error("Нет авторизации, чтобы убирать лайк");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      if (error.message === "Нет авторизации, чтобы убирать лайк") {
+        alert("Авторизуйтесь, чтобы убрать лайк");
+      }
+    });
 }

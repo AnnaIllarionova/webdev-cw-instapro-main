@@ -1,11 +1,14 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
+import { addLike } from "./add-like-component.js";
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
   console.log("Актуальный список постов:", posts);
-  const postsHtml = posts.map((post) => {
+ 
+  const postsHtml = posts.map((post, index) => {
+    console.log(post.user.name);
     return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
@@ -16,15 +19,19 @@ export function renderPostsPageComponent({ appEl }) {
         <img class="post-image" src="${post.imageUrl}">
       </div>
       <div class="post-likes">
-        <button data-post-id="${post.id}" class="like-button">
-          <img src="./assets/images/like-active.svg">
+        <button data-index="${index}" data-post-id="${post.id}" class="like-button">
+              <img src=${
+                post.isLiked
+                  ? "./assets/images/like-active.svg"
+                  : "./assets/images/like-not-active.svg"
+              }></img>
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>2</strong>
+          Нравится: <strong>${post.likes}</strong>
         </p>
       </div>
       <p class="post-text">
-        <span class="user-name">${post.user.name}</span>
+        <span class="user-name">${post.isLiked ? `${post.user.name}` : "" }</span>
         ${post.description}
       </p>
       <p class="post-date">
@@ -59,4 +66,5 @@ export function renderPostsPageComponent({ appEl }) {
       });
     });
   }
+  addLike({ posts });
 }
