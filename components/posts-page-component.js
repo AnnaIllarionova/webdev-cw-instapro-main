@@ -33,13 +33,11 @@ export function renderPostsPageComponent({ appEl }) {
               }></img>
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>${post.likes}</strong>
+          Нравится: <strong>${post.likes.map(({ name }) => name).join(", ")}</strong>
         </p>
       </div>
       <p class="post-text">
-        <span class="user-name">${
-          post.isLiked ? `${post.user.name}` : ""
-        }</span>
+        <span class="user-name">${post.user.name}</span>
         ${post.description}
       </p>
       <p class="post-date">
