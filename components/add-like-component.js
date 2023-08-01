@@ -29,6 +29,7 @@ export function addLike({ posts }) {
           getPosts({ token: getToken() });
         });
       }  
+      goToPage(POSTS_PAGE);
     });
   }
 }

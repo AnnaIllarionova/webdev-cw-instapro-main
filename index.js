@@ -16,7 +16,7 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 import { renderUserPage } from "./components/user-posts-component.js";
-import { addLike } from "./components/add-like-component.js";
+//import { addLike } from "./components/add-like-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -70,13 +70,13 @@ export const goToPage = (newPage, data) => {
 
     if (newPage === USER_POSTS_PAGE) {
       // TODO: реализовать получение постов юзера из API
-      
+
       page = USER_POSTS_PAGE;
-      const userId = data.userId;
+      let userId = data.userId;
       console.log("Открываю страницу пользователя: ", data.userId);
       posts = [];
       posts = getUserPost({ token: getToken(), userId: userId });
-      console.log(userId);
+
       return renderApp();
     }
 
@@ -132,11 +132,11 @@ export const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографий пользвателя
-    renderUserPage({ userId });
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
+    return renderPostsPageComponent({
+      appEl,
+    });
   }
- 
 };
 
 goToPage(POSTS_PAGE);

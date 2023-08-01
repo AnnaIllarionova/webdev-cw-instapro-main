@@ -8,11 +8,13 @@ import { ru } from "date-fns/locale";
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
   console.log("Актуальный список постов:", posts);
- 
-  const postsHtml = posts.map((post, index) => {
-    const postWasCreated = formatDistanceToNow(new Date(post.createdAt), { locale: ru})
-    console.log(post.user.name);
-    return `
+
+  const postsHtml = posts
+    .map((post, index) => {
+      const postWasCreated = formatDistanceToNow(new Date(post.createdAt), {
+        locale: ru,
+      });
+      return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
           <img src="${post.user.imageUrl}" class="post-header__user-image">
@@ -22,7 +24,9 @@ export function renderPostsPageComponent({ appEl }) {
         <img class="post-image" src="${post.imageUrl}">
       </div>
       <div class="post-likes">
-        <button data-index="${index}" data-post-id="${post.id}" class="like-button">
+        <button data-index="${index}" data-post-id="${
+        post.id
+      }" class="like-button">
               <img src=${
                 post.isLiked
                   ? "./assets/images/like-active.svg"
@@ -34,7 +38,9 @@ export function renderPostsPageComponent({ appEl }) {
         </p>
       </div>
       <p class="post-text">
-        <span class="user-name">${post.isLiked ? `${post.user.name}` : "" }</span>
+        <span class="user-name">${
+          post.isLiked ? `${post.user.name}` : ""
+        }</span>
         ${post.description}
       </p>
       <p class="post-date">
@@ -42,8 +48,7 @@ export function renderPostsPageComponent({ appEl }) {
       </p>
     </li>
     `;
-  });
-
+    }).join("");
   /**
    * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
    * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow

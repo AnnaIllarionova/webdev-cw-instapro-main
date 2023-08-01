@@ -1,15 +1,14 @@
 import { getUserPost } from "../api.js";
-import { getToken, goToPage } from "../index.js";
+import { getToken, getUserId, goToPage } from "../index.js";
 import { USER_POSTS_PAGE } from "../routes.js";
 
-export function renderUserPage({ userId }) {
-    const appEl = document.getElementById("app");
-
-    getUserPost({ token: getToken(), userId })
+export function renderUserPage() {
+  const appEl = document.getElementById("app");
+  return getUserPost({ token: getToken() })
     .then((userPosts) => {
-      console.log(userId);
       const userPostHtml = userPosts
         .map((post) => {
+          //const userId = post.user.id;
           return `
       <li class="post">
         <div class="post-header" data-user-id="${post.user.id}">
@@ -35,7 +34,7 @@ export function renderUserPage({ userId }) {
           19 минут назад
         </p>
       </li>
-      `;
+      `
         })
         .join("");
 
@@ -47,8 +46,16 @@ export function renderUserPage({ userId }) {
         </ul>
       </div>
       `;
-      
+
       appEl.innerHTML = userPostsHtml;
+
+      for (let userEl of document.querySelectorAll(".post-header")) {
+        userEl.addEventListener("click", () => {
+          goToPage(USER_POSTS_PAGE, {
+            userId: userEl.dataset.userId,
+          });
+        });
+      }
 
       renderHeaderComponent({
         element: document.querySelector(".header-container"),
@@ -60,5 +67,3 @@ export function renderUserPage({ userId }) {
     });
   return goToPage(USER_POSTS_PAGE);
 }
-
-
