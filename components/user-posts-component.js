@@ -1,5 +1,5 @@
 import { getUserPost } from "../api.js";
-import { getToken, getUserId, goToPage } from "../index.js";
+import { getToken, goToPage } from "../index.js";
 import { USER_POSTS_PAGE } from "../routes.js";
 
 export function renderUserPage() {
@@ -8,7 +8,6 @@ export function renderUserPage() {
     .then((userPosts) => {
       const userPostHtml = userPosts
         .map((post) => {
-          //const userId = post.user.id;
           return `
       <li class="post">
         <div class="post-header" data-user-id="${post.user.id}">
@@ -65,5 +64,4 @@ export function renderUserPage() {
       console.warn("error");
       appEl.innerHTML = "Ошибка при загрузке страницы пользователя";
     });
-  return goToPage(USER_POSTS_PAGE);
 }

@@ -1,7 +1,6 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage } from "../index.js";
-import { addLike } from "./add-like-component.js";
+import { posts, goToPage, toggleUserLike } from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -48,7 +47,9 @@ export function renderPostsPageComponent({ appEl }) {
       </p>
     </li>
     `;
-    }).join("");
+    })
+    .join("");
+
   /**
    * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
    * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
@@ -74,5 +75,10 @@ export function renderPostsPageComponent({ appEl }) {
       });
     });
   }
-  addLike({ posts });
+
+  for (let likeEl of document.querySelectorAll(".like-button")) {
+    likeEl.addEventListener("click", () => {
+      toggleUserLike({ postId: likeEl.dataset.postId });
+    });
+  }
 }

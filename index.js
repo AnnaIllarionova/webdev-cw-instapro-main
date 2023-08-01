@@ -1,4 +1,10 @@
-import { getPosts, getUserPost, postNewPost } from "./api.js";
+import {
+  getPosts,
+  getUserPost,
+  postNewPost,
+  getLikes,
+  removeLike,
+} from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -15,7 +21,7 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
-import { renderUserPage } from "./components/user-posts-component.js";
+//import { renderUserPage } from "./components/user-posts-component.js";
 //import { addLike } from "./components/add-like-component.js";
 
 export let user = getUserFromLocalStorage();
@@ -25,6 +31,24 @@ export let posts = [];
 export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
+};
+
+export const toggleUserLike = ({ postId }) => {
+  const index = posts.findIndex((post) => post.id === postId);
+
+  if (posts[index].isLiked) {
+    removeLike({ token: getToken(), id: postId }).then((updatedPost) => {
+      posts[index].likes = updatedPost.post.likes;
+      posts[index].isLiked = false;
+      renderApp();
+    });
+  } else {
+    getLikes({ token: getToken(), id: postId }).then((updatedPost) => {
+      posts[index].likes = updatedPost.post.likes;
+      posts[index].isLiked = true;
+      renderApp();
+    });
+  }
 };
 
 export const logout = () => {
@@ -68,18 +92,21 @@ export const goToPage = (newPage, data) => {
         });
     }
 
+    //посты одного пользователя
     if (newPage === USER_POSTS_PAGE) {
-      // TODO: реализовать получение постов юзера из API
+      page = LOADING_PAGE;
+      renderApp();
 
-      page = USER_POSTS_PAGE;
-      let userId = data.userId;
-      console.log("Открываю страницу пользователя: ", data.userId);
-      posts = [];
-      posts = getUserPost({ token: getToken(), userId: userId });
-
-      return renderApp();
+      return getUserPost({ token: getToken(), userId: data.userId })
+      .then(
+        (newPosts) => {
+          page = USER_POSTS_PAGE;
+          posts = newPosts;
+          renderApp();
+          console.log(posts);
+        }
+      );
     }
-
     page = newPage;
     renderApp();
 
@@ -89,6 +116,7 @@ export const goToPage = (newPage, data) => {
   throw new Error("страницы не существует");
 };
 
+//рендер приложения
 export const renderApp = () => {
   const appEl = document.getElementById("app");
   if (page === LOADING_PAGE) {
