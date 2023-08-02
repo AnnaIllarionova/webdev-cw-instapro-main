@@ -1,8 +1,9 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage, toggleUserLike } from "../index.js";
+import { posts, goToPage, toggleUserLike, getToken, renderApp, user } from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
+import { deletePost } from "../api.js";
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
@@ -22,6 +23,7 @@ export function renderPostsPageComponent({ appEl }) {
       <div class="post-image-container">
         <img class="post-image" src="${post.imageUrl}">
       </div>
+      <div class="button-box">
       <div class="post-likes">
         <button data-index="${index}" data-post-id="${
         post.id
@@ -33,8 +35,16 @@ export function renderPostsPageComponent({ appEl }) {
               }></img>
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>${post.likes.map(({ name }) => name).join(", ")}</strong>
+          Нравится: <strong>${post.likes
+            .map(({ name }) => name)
+            .join(", ")}</strong>
         </p>
+      </div>
+      <div class="post-delete">
+          <button class="delete-button" data-post-id="${post.id}" data-user-id="${post.user.id}">
+          <img class="delete-button-size" src="./assets/images/trash-svgrepo-com.svg"><img>
+          </button>
+       </div>
       </div>
       <p class="post-text">
         <span class="user-name">${post.user.name}</span>
@@ -77,6 +87,25 @@ export function renderPostsPageComponent({ appEl }) {
   for (let likeEl of document.querySelectorAll(".like-button")) {
     likeEl.addEventListener("click", () => {
       toggleUserLike({ postId: likeEl.dataset.postId });
+    });
+  }
+
+  for (const deleteEl of document.querySelectorAll(".delete-button")) {
+    deleteEl.addEventListener("click", () => {
+
+      const postId = deleteEl.dataset.postId;
+      console.log(user._id);
+        console.log(deleteEl.dataset.userId);
+
+      if (user._id === deleteEl.dataset.userId) {
+        
+        deletePost({ postId, token: getToken() })
+      .then(() => {
+        renderApp();
+      });
+      } else {
+        alert("Вы не можете удалять чужие посты")
+      }
     });
   }
 }

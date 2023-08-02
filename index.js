@@ -33,6 +33,7 @@ export const getToken = () => {
   return token;
 };
 
+//функция для лайков
 export const toggleUserLike = ({ postId }) => {
   const index = posts.findIndex((post) => post.id === postId);
 
@@ -97,8 +98,7 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
-      return getUserPost({ token: getToken(), userId: data.userId })
-      .then(
+      return getUserPost({ token: getToken(), userId: data.userId }).then(
         (newPosts) => {
           page = USER_POSTS_PAGE;
           posts = newPosts;
