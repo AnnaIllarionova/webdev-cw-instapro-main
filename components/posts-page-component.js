@@ -1,6 +1,13 @@
-import { USER_POSTS_PAGE } from "../routes.js";
+import { POSTS_PAGE, USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage, toggleUserLike, getToken, renderApp, user } from "../index.js";
+import {
+  posts,
+  goToPage,
+  toggleUserLike,
+  getToken,
+  renderApp,
+  user,
+} from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import { deletePost } from "../api.js";
@@ -41,7 +48,9 @@ export function renderPostsPageComponent({ appEl }) {
         </p>
       </div>
       <div class="post-delete">
-          <button class="delete-button" data-post-id="${post.id}" data-user-id="${post.user.id}">
+          <button class="delete-button" data-post-id="${
+            post.id
+          }" data-user-id="${post.user.id}">
           <img class="delete-button-size" src="./assets/images/trash-svgrepo-com.svg"><img>
           </button>
        </div>
@@ -84,28 +93,30 @@ export function renderPostsPageComponent({ appEl }) {
     });
   }
 
+  //При нажатии на кнопку лайка
   for (let likeEl of document.querySelectorAll(".like-button")) {
     likeEl.addEventListener("click", () => {
       toggleUserLike({ postId: likeEl.dataset.postId });
     });
   }
 
+  //Удаление своего комментария
   for (const deleteEl of document.querySelectorAll(".delete-button")) {
     deleteEl.addEventListener("click", () => {
-
       const postId = deleteEl.dataset.postId;
       console.log(user._id);
-        console.log(deleteEl.dataset.userId);
+      console.log(deleteEl.dataset.userId);
 
       if (user._id === deleteEl.dataset.userId) {
-        
         deletePost({ postId, token: getToken() })
-      .then(() => {
-        renderApp();
-      });
+        .then(() => {
+          //renderApp();
+          goToPage(POSTS_PAGE);
+        });
       } else {
-        alert("Вы не можете удалять чужие посты")
+        alert("Вы не можете удалять чужие посты");
       }
+   
     });
   }
 }
