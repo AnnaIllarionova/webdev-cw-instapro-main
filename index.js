@@ -1,4 +1,10 @@
-import { getPosts, getUserPost, postNewPost } from "./api.js";
+import {
+  getPosts,
+  getUserPost,
+  postNewPost,
+  getLikes,
+  removeLike,
+} from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -15,14 +21,35 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
+//import { renderUserPage } from "./components/user-posts-component.js";
+//import { addLike } from "./components/add-like-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
 
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
+};
+
+//функция для лайков
+export const toggleUserLike = ({ postId }) => {
+  const index = posts.findIndex((post) => post.id === postId);
+
+  if (posts[index].isLiked) {
+    removeLike({ token: getToken(), id: postId }).then((updatedPost) => {
+      posts[index].likes = updatedPost.post.likes;
+      posts[index].isLiked = false;
+      renderApp();
+    });
+  } else {
+    getLikes({ token: getToken(), id: postId }).then((updatedPost) => {
+      posts[index].likes = updatedPost.post.likes;
+      posts[index].isLiked = true;
+      renderApp();
+    });
+  }
 };
 
 export const logout = () => {
@@ -66,16 +93,20 @@ export const goToPage = (newPage, data) => {
         });
     }
 
+    //посты одного пользователя
     if (newPage === USER_POSTS_PAGE) {
-      // TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
-      page = USER_POSTS_PAGE;
-      const userId = data.userId;
-      posts = [];
-      posts = getUserPost({ token: getToken(), userId })
-      return renderApp();
-    }
+      page = LOADING_PAGE;
+      renderApp();
 
+      return getUserPost({ token: getToken(), userId: data.userId }).then(
+        (newPosts) => {
+          page = USER_POSTS_PAGE;
+          posts = newPosts;
+          renderApp();
+          console.log(posts);
+        }
+      );
+    }
     page = newPage;
     renderApp();
 
@@ -85,7 +116,8 @@ export const goToPage = (newPage, data) => {
   throw new Error("страницы не существует");
 };
 
-const renderApp = () => {
+//рендер приложения
+export const renderApp = () => {
   const appEl = document.getElementById("app");
   if (page === LOADING_PAGE) {
     return renderLoadingPageComponent({
@@ -128,53 +160,10 @@ const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографий пользвателя
-    
-    getUserPost({ token: getToken()})
-    .then((userPosts) => {
-      const userPostHtml = userPosts.map((post) => {
-        return `
-        <li class="post">
-          <div class="post-header" data-user-id="${post.user.id}">
-              <img src="${post.user.imageUrl}" class="post-header__user-image">
-              <p class="post-header__user-name">${post.user.name}</p>
-          </div>
-          <div class="post-image-container">
-            <img class="post-image" src="${post.imageUrl}">
-          </div>
-          <div class="post-likes">
-            <button data-post-id="${post.id}" class="like-button">
-              <img src="./assets/images/like-active.svg">
-            </button>
-            <p class="post-likes-text">
-              Нравится: <strong>2</strong>
-            </p>
-          </div>
-          <p class="post-text">
-            <span class="user-name">${post.user.name}</span>
-            ${post.description}
-          </p>
-          <p class="post-date">
-            19 минут назад
-          </p>
-        </li>
-        `}).join('');
-
-        const userPostsHtml = `
-        <div class="page-container">
-          <div class="header-container"></div>
-          <ul class="posts">
-            ${userPostHtml}
-          </ul>
-        </div>
-        `;
-
-        appEl.innerHTML = userPostsHtml;
-    })
-    .catch((error) => {
-      console.warn('error');
-      appEl.innerHTML = 'Ошибка при загрузке страницы пользователя';
-    })
-   return;
+    //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
+    return renderPostsPageComponent({
+      appEl,
+    });
   }
 };
 
