@@ -128,9 +128,17 @@ export function renderAuthPageComponent({ appEl, setUser }) {
         }
 
         registerUser({
-          login: login,
+          login: login
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
           password: password,
-          name: name,
+          name: name
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
           imageUrl,
         })
           .then((user) => {

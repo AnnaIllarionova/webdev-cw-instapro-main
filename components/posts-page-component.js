@@ -1,26 +1,20 @@
 import { POSTS_PAGE, USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import {
-  posts,
-  goToPage,
-  toggleUserLike,
-  getToken,
-  renderApp,
-  user,
-} from "../index.js";
+import { posts, goToPage, toggleUserLike, getToken, user } from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import { deletePost } from "../api.js";
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
-  console.log("Актуальный список постов:", posts);
+  // console.log("Актуальный список постов:", posts);
 
   const postsHtml = posts
     .map((post, index) => {
       const postWasCreated = formatDistanceToNow(new Date(post.createdAt), {
         locale: ru,
       });
+      // console.log(post.likes[0].name);
       return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
@@ -42,9 +36,18 @@ export function renderPostsPageComponent({ appEl }) {
               }></img>
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>${post.likes
-            .map(({ name }) => name)
-            .join(", ")}</strong>
+          Нравится: <strong>${
+            post.likes.length === 0
+              ? 0
+              : `${
+                  post.likes.length === 1
+                    ? post.likes[0].name
+                    : `${post.likes[post.likes.length - 1].name} и ещё ${
+                        post.likes.length - 1
+                      }`
+                }`
+          }
+            </strong>
         </p>
       </div>
       <div class="post-delete">
@@ -108,15 +111,16 @@ export function renderPostsPageComponent({ appEl }) {
       console.log(deleteEl.dataset.userId);
 
       if (user._id === deleteEl.dataset.userId) {
-        deletePost({ postId, token: getToken() })
-        .then(() => {
-          //renderApp();
+        deletePost({ postId, token: getToken() }).then(() => {
           goToPage(POSTS_PAGE);
         });
       } else {
         alert("Вы не можете удалять чужие посты");
       }
-   
     });
   }
 }
+//В нравится будут отражаться имена всех, кто лайкнул пост
+// ${post.likes
+//   .map(({ name }) => name)
+//   .join(", ")}

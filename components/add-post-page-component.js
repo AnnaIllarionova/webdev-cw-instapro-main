@@ -22,7 +22,11 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     document.getElementById("add-button").addEventListener("click", () => {
       const commentElement = document.getElementById("comment-input");
       onAddPostClick({
-        description: commentElement.value,
+        description: commentElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         imageUrl,
       });
       console.log(uploadImageContainer.value);
